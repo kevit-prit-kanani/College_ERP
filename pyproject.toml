@@ -1,0 +1,19 @@
+[project]
+name = "college-erp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "kevit-prit-kanani", email = "prit.kanani@kevit.io" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+    "motor>=3.7.1",
+    "pydantic-settings>=2.15.0",
+    "pymongo>=4.17.0",
+    "python-dotenv>=1.2.3",
+    "uvicorn>=0.52.4",
+]
+
+
