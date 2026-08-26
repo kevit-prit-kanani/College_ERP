@@ -26,4 +26,6 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 
 
 USERS_COLLECTION = config.get("USERS_COLLECTION")
-
+SECRET_KEY = config.get("SECRET_KEY", "This_is_the_secrate_key_")
+ALGORITHM = config.get("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = config.get("ACCESS_TOKEN_EXPIRE_MINUTES", 30)

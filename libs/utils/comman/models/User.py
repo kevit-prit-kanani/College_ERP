@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from libs.utils.comman.customs.variables import PyObjectId
@@ -26,4 +28,3 @@ class CreateUserRequest(BaseModel):
     age: int | None = None
     education: str | None = None
     department_id: PyObjectId
-

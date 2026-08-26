@@ -8,6 +8,7 @@ class GetStudentResponse(UserResponse):
 
 
 class CreateStudentRequest(CreateUserRequest):
+    hashed_password:
     enrollment_number: str
     batch: str
     semester: int

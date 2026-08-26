@@ -9,11 +9,20 @@
   "batch": "CSE",
   "semester": 7
 }
-500
-Undocumented
-Error: Internal Server Error
 
-Response body
-Download
-Internal Server Error
+{
+  "first_name": "dummy",
+  "last_name": " Staff",
+  "email": "staff@kevit.io",
+  "age": 10,
+  "education": "b.tech",
+  "department_id": "68a123456789abcdef123456",
+  "role": "Admin",
+  "password": "prit kanani 9@"
+}
 
+{
+  "email": "staff@kevit.io",
+  "password": "prit kanani 9@",
+  "role": "Staff"
+}
