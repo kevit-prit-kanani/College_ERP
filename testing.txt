@@ -1,0 +1,28 @@
+{
+  "first_name": "prit",
+  "last_name": "kanani",
+  "email": "prit.kanani@kevit.io",
+  "age": 10,
+  "education": "12th fail",
+  "department_id": "68a123456789abcdef123456",
+  "enrollment_number": "23010101126",
+  "batch": "CSE",
+  "semester": 7
+}
+
+{
+  "first_name": "dummy",
+  "last_name": " Staff",
+  "email": "staff@kevit.io",
+  "age": 10,
+  "education": "b.tech",
+  "department_id": "68a123456789abcdef123456",
+  "role": "Admin",
+  "password": "prit kanani 9@"
+}
+
+{
+  "email": "staff@kevit.io",
+  "password": "prit kanani 9@",
+  "role": "Staff"
+}
