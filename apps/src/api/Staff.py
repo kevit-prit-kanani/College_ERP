@@ -37,6 +37,13 @@ def get_all_staff(
     return response
 
 
+@staff.get("/staff/{staff_id}")
+def get_staff_by_id(staff_id: PyObjectId):
+    staff_by_id = db_Staff.find_one({"_id": staff_id})
+    response = GetStaffResponse(**staff_by_id)
+    return response
+
+
 @staff_admin.post("/staff")
 def create_staff(staff_data: CreateStaffRequest):
     new_staff = staff_data.model_dump(by_alias=False, exclude_unset=False)
