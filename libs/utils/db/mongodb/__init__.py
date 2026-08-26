@@ -22,6 +22,6 @@ db = connect_db(FASTAPI_DATABASE_NAME)
 db_Student = db["Students"]
 db_Staff = db["Staff"]
 db_Attendance = db["Attendance"]
-db_Batches = db["Batches"]
+db_Intakes = db["Intakes"]
 db_Department = db["Department"]
 db_User_wise_Department = db["User_wise_Department"]
