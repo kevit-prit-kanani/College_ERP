@@ -26,3 +26,4 @@ class CreateUserRequest(BaseModel):
     age: int | None = None
     education: str | None = None
     department_id: PyObjectId
+

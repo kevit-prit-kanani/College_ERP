@@ -11,3 +11,7 @@ class CreateStudentRequest(CreateUserRequest):
     enrollment_number: str
     batch: str
     semester: int
+
+
+class UpdateStudentRequest(CreateStudentRequest):
+    pass
