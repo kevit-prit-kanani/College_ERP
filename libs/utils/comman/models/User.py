@@ -1,37 +1,30 @@
-from datetime import date, datetime
 from typing import Literal
 
-from bson import ObjectId
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+from libs.utils.comman.customs.variables import PyObjectId
 
 
-class Users(BaseModel):
-    model_config = ConfigDict(use_bson=True)
+class UserResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
 
-    user_id = ObjectId
+    id: PyObjectId = Field(alias="_id")
     first_name: str
     last_name: str
     email: EmailStr
-    hash_password: str
-    birthDate: date
     age: int | None
     education: str | None
-    created_At: datetime
-    modified_At: datetime | None
-    department_id: ObjectId | None
+    department_id: PyObjectId
     is_Active: bool = True
     is_deleted: bool = False
 
 
-class Staff(Users):
-    role: Literal["admin", "staff"] = "Staff"
+class CreateUserRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
 
-
-class Students(Users):
-    enrollment_number : str
-    batch: str
-    semester: int
-
-class User_wise_Department(BaseModel):
-    user_id: ObjectId
-    department_idL: ObjectId
+    first_name: str
+    last_name: str
+    email: EmailStr
+    age: int | None = None
+    education: str | None = None
+    department_id: PyObjectId
