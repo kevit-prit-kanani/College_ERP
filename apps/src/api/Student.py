@@ -5,6 +5,7 @@ from fastapi import APIRouter, Body, Depends, Header, Query
 from pydantic import TypeAdapter
 
 from libs.utils.comman.auth.token_generation import require_roles
+from libs.utils.comman.customs.HashPass import get_hashed_password
 from libs.utils.comman.customs.variables import PyObjectId
 from libs.utils.comman.models.APIResponse import DBResponse, DeleteEffect, UpdateEffect
 from libs.utils.comman.models.Student import (
@@ -40,15 +41,19 @@ async def get_all_students(
 async def create_student(student_data: CreateStudentRequest):
     # Convert Pydantic model to dict - PyObjectId stays as ObjectId
     new_student = student_data.model_dump(by_alias=False, exclude_unset=False)
-    new_student.update({
-                "is_active": True,
-                "is_deleted": False,
-                "created_at": datetime.now(UTC),
-                "updated_at": datetime.now(UTC),
-            })
+    new_student["hash_password"] = get_hashed_password(student_data.hash_password)
+    new_student.update(
+        {
+            "is_active": True,
+            "is_deleted": False,
+            "created_at": datetime.now(UTC),
+            "updated_at": datetime.now(UTC),
+        }
+    )
     result = db_Student.insert_one(new_student)
 
     new_student["_id"] = result.inserted_id
+    new_student.pop("hash_password")
     response = GetStudentResponse(**new_student)
     return response
 
