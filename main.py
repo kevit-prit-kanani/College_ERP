@@ -5,7 +5,7 @@ from pymongo.errors import PyMongoError
 
 from apps.src.main import api
 from libs.utils.config import MONGODB_URL
-from libs.utils.db.mongodb import lifespan
+from libs.utils.db.mongodb.lifespan import lifespan
 from libs.utils.logging_config import setup_logging
 
 setup_logging()
