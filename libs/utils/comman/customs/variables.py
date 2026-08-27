@@ -29,11 +29,13 @@ class PyObjectId(ObjectId):
             serialization=core_schema.plain_serializer_function_ser_schema(
                 lambda value: str(value),
                 return_schema=core_schema.str_schema(),
+                when_used="json",
             ),
         )
 
     @classmethod
     def validate(cls, value: str) -> "PyObjectId":
+
         if not ObjectId.is_valid(value):
             raise ValueError("Invalid ObjectId")
 

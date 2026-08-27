@@ -70,6 +70,9 @@ async def update_student(
     student_id: PyObjectId, student: Annotated[UpdateStudentRequest, Body()]
 ):
     update_data = student.model_dump(exclude_unset=True)
+    update_data.update({
+        "updated_at": datetime.now(UTC)
+    })
     result = db_Student.update_one({"_id": student_id}, {"$set": update_data})
     response = DBResponse(
         id=student_id,
