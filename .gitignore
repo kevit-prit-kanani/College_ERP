@@ -21,7 +21,10 @@ wheels/
 .coverage
 htmlcov/
 
+
 # Editor and operating-system files
 .vscode/
 .idea/
 .DS_Store
+logs/app.log
+testing.txt
