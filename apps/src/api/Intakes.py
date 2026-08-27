@@ -64,10 +64,7 @@ def create_current_year_intakes(create_intakes: CreateIntake):
 
     current_year = datetime.now(tz=UTC).year
 
-    branch = {
-        "department_id": create_intakes.department_id,
-        "totalStudentsIntake": create_intakes.totalStudentsIntake,
-    }
+    branch = create_intakes.model_dump()
 
     document = {
         "year": current_year,
@@ -93,10 +90,7 @@ def update_current_year_intakes(create_intakes: CreateIntake):
 
     current_year = datetime.now(tz=UTC).year
 
-    branch = {
-        "department_id": create_intakes.department_id,
-        "totalStudentsIntake": create_intakes.totalStudentsIntake,
-    }
+    branch = create_intakes.model_dump()
 
     result = db_Intakes.update_one(
         {
