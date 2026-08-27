@@ -5,6 +5,7 @@ class GetStudentResponse(UserResponse):
     enrollment_number: str
     batch: str
     semester: int
+    addmission_year: int
 
 
 class CreateStudentRequest(CreateUserRequest):
@@ -12,6 +13,7 @@ class CreateStudentRequest(CreateUserRequest):
     enrollment_number: str
     batch: str
     semester: int
+    addmission_year: int
 
 
 class UpdateStudentRequest(CreateStudentRequest):

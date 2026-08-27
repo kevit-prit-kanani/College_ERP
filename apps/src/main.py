@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from apps.src.api.Analytics import analytics
 from apps.src.api.Department import department_admin
 from apps.src.api.Intakes import intakes_admin
 from apps.src.api.Staff import staff, staff_admin
@@ -14,3 +15,4 @@ api.include_router(staff)
 api.include_router(staff_admin)
 api.include_router(department_admin)
 api.include_router(intakes_admin)
+api.include_router(analytics)

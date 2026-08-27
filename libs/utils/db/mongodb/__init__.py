@@ -19,7 +19,7 @@ def connect_db(db_name: str):
 
 db = connect_db(FASTAPI_DATABASE_NAME)
 
-db_Student = db["Students"]
+db_Student = db["Student"]
 db_Staff = db["Staff"]
 db_Attendance = db["Attendance"]
 db_Intakes = db["Intakes"]
