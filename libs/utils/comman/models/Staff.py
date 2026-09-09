@@ -1,5 +1,3 @@
-# role: Literal["Admin", "Staff", "Student"]
-
 from typing import Literal
 
 from libs.utils.comman.customs.variables import PyObjectId
@@ -13,6 +11,7 @@ class GetStaffResponse(UserResponse):
 class CreateStaffRequest(CreateUserRequest):
     role: Literal["Admin", "Staff"]
     hash_password: str
+
 
 class UpdateStaffRequest(CreateUserRequest):
     id: PyObjectId
