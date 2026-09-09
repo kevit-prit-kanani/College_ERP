@@ -145,7 +145,8 @@ The application will be available at `http://localhost:8000`
 - `DELETE /staff/{id}` - Delete staff record
 
 ### Department Management
-- `GET /department` - List all departments
+- `GET /departments` - List all departments
+- `GET /departments/combobox` - List departments for combobox dropdown (`id`, `name`)
 - `POST /department` - Create new department
 - `GET /department/{id}` - Get department details
 - `PUT /department/{id}` - Update department

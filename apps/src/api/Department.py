@@ -30,6 +30,13 @@ def get_all_departments(
     return response
 
 
+@department_admin.get("/departments/combobox")
+def get_departments_for_combobox():
+    department_list = db_Department.find({}, {"name": 1}).sort("name", 1)
+    response = TypeAdapter(list[GetAllDepartment]).validate_python(department_list)
+    return response
+
+
 @department_admin.post("/department")
 def create_department(name: str):
     result = db_Department.insert_one({"name": name})
