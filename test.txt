@@ -8,6 +8,9 @@ staff@kevit.io
 prit kanani 9@
 
 
+admin@gmail.com
+prit kanani 9@
+
 {
   "email": "student@kevit.io",
   "password": "prit kanani 9@",
