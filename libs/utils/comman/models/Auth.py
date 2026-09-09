@@ -2,6 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel, EmailStr, Field
 
+from libs.utils.comman.customs.variables import PyObjectId
 from libs.utils.comman.models.Staff import CreateStaffRequest
 from libs.utils.comman.models.Student import CreateStudentRequest
 
@@ -23,3 +24,9 @@ class StudentRegisterRequest(CreateStudentRequest):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    role: Literal["Staff", "Student", "Admin"]
+
+
+class find_user_in_db(BaseModel):
+    id: PyObjectId
+    role: str

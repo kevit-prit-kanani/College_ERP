@@ -20,8 +20,8 @@ department_admin = APIRouter(
 )
 
 
-@department_admin.get("/department")
-def get_all_departmen(
+@department_admin.get("/departments")
+def get_all_departments(
     skip: Annotated[int, Query()] = 0,
     limit: Annotated[int, Query()] = 10,
 ):

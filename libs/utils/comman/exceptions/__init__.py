@@ -1,8 +1,11 @@
+import logging
 from typing import Any
 
 from fastapi import HTTPException, status
 
 from libs.utils.comman.exceptions.responses import ErrorResponse
+
+logger = logging.getLogger(__name__)
 
 
 class AppException(HTTPException):
@@ -22,8 +25,11 @@ class AppException(HTTPException):
         self.details = details
         super().__init__(status_code=status_code, detail=self.to_dict())
 
-        print(
-            f"🚨 Raising AppException: {self.__class__.__name__}, Status: {self.status_code}, Message: {self.message}"
+        logger.error(
+            "Raising AppException: %s, Status: %s, Message: %s",
+            self.__class__.__name__,
+            self.status_code,
+            self.message,
         )
 
     def to_dict(self) -> dict:

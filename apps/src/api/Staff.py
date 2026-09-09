@@ -27,21 +27,20 @@ staff_admin = APIRouter(
 )
 
 
-@staff_admin.get("/staff")
+@staff_admin.get("/staffs")
 def get_all_staff(
     skip: Annotated[int, Query()] = 0, limit: Annotated[int, Query()] = 10
 ):
-    """Get all students with pagination."""
-    students_list = list(db_Staff.find().skip(skip).limit(limit))
-    response = TypeAdapter(list[GetStaffResponse]).validate_python(students_list)
+    staff_list = list(db_Staff.find().skip(skip).limit(limit))
+    response = TypeAdapter(list[GetStaffResponse]).validate_python(staff_list)
     return response
 
 
 @staff.get("/staff/{staff_id}")
 def get_staff_by_id(staff_id: PyObjectId):
     staff_by_id = db_Staff.find_one({"_id": staff_id})
-    response = GetStaffResponse(**staff_by_id)
-    return response
+    response = GetStaffResponse.model_validate(staff_by_id)
+    return response.model_dump(mode="json")
 
 
 @staff_admin.post("/staff")

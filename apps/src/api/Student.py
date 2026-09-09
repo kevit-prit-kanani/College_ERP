@@ -1,3 +1,4 @@
+import logging
 from datetime import UTC, datetime
 from typing import Annotated
 
@@ -7,6 +8,7 @@ from pydantic import TypeAdapter
 from libs.utils.comman.auth.token_generation import require_roles
 from libs.utils.comman.customs.HashPass import get_hashed_password
 from libs.utils.comman.customs.variables import PyObjectId
+from libs.utils.comman.exceptions import NotFoundError
 from libs.utils.comman.models.APIResponse import DBResponse, DeleteEffect, UpdateEffect
 from libs.utils.comman.models.Student import (
     CreateStudentRequest,
@@ -14,6 +16,8 @@ from libs.utils.comman.models.Student import (
     UpdateStudentRequest,
 )
 from libs.utils.db.mongodb import db_Student
+
+logger = logging.getLogger(__name__)
 
 student_admin_staff = APIRouter(
     tags=["Student"],
@@ -26,12 +30,11 @@ student_all_roles = APIRouter(
 )
 
 
-@student_admin_staff.get("/student")
+@student_admin_staff.get("/students")
 async def get_all_students(
     skip: Annotated[int, Query()] = 0,
     limit: Annotated[int, Query()] = 10,
 ):
-    """Get all students with pagination."""
     students_list = list(db_Student.find().skip(skip).limit(limit))
     response = TypeAdapter(list[GetStudentResponse]).validate_python(students_list)
     return response
@@ -39,8 +42,8 @@ async def get_all_students(
 
 @student_admin_staff.post("/student")
 async def create_student(student_data: CreateStudentRequest):
-    # Convert Pydantic model to dict - PyObjectId stays as ObjectId
-    new_student = student_data.model_dump(by_alias=False, exclude_unset=False)
+
+    new_student = student_data.model_dump(exclude_unset=False)
     new_student["hash_password"] = get_hashed_password(student_data.hash_password)
     new_student.update(
         {
@@ -54,15 +57,19 @@ async def create_student(student_data: CreateStudentRequest):
 
     new_student["_id"] = result.inserted_id
     new_student.pop("hash_password")
-    response = GetStudentResponse(**new_student)
+    response = GetStudentResponse.model_dump(new_student, mode="ObjectId")
     return response
 
 
 @student_all_roles.get("/student/{student_id}")
 async def get_student_by_id(student_id: PyObjectId):
     student = db_Student.find_one({"_id": student_id})
-    response = GetStudentResponse(**student)
-    return response
+    if student is None:
+        raise NotFoundError("Student", student_id)
+
+    logger.info("this is the student details: %s", student)
+    response = GetStudentResponse.model_validate(student)
+    return response.model_dump(mode="json")
 
 
 @student_all_roles.put("/student/{student_id}")
@@ -70,9 +77,7 @@ async def update_student(
     student_id: PyObjectId, student: Annotated[UpdateStudentRequest, Body()]
 ):
     update_data = student.model_dump(exclude_unset=True)
-    update_data.update({
-        "updated_at": datetime.now(UTC)
-    })
+    update_data.update({"updated_at": datetime.now(UTC)})
     result = db_Student.update_one({"_id": student_id}, {"$set": update_data})
     response = DBResponse(
         id=student_id,

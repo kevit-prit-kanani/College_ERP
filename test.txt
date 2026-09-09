@@ -1,0 +1,15 @@
+{
+  "email": "staff@kevit.io",
+  "password": "prit kanani 9@",
+  "role": "Staff"
+}
+
+staff@kevit.io
+prit kanani 9@
+
+
+{
+  "email": "student@kevit.io",
+  "password": "prit kanani 9@",
+  "role": "Student"
+}

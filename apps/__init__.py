@@ -1,2 +1,8 @@
+import logging
+
+
+logger = logging.getLogger(__name__)
+
+
 def main() -> None:
-    print("Hello from college-erp!")
+    logger.info("College ERP started")

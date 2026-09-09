@@ -2,8 +2,6 @@
 
 from typing import Literal
 
-from pydantic import Field
-
 from libs.utils.comman.customs.variables import PyObjectId
 from libs.utils.comman.models.User import CreateUserRequest, UserResponse
 
@@ -17,6 +15,6 @@ class CreateStaffRequest(CreateUserRequest):
     hash_password: str
 
 class UpdateStaffRequest(CreateUserRequest):
-    id: PyObjectId = Field(alias='_id')
+    id: PyObjectId
     is_active: bool
     is_deleted: bool

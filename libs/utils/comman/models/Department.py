@@ -1,10 +1,7 @@
-from pydantic import BaseModel, ConfigDict, Field
-
-from libs.utils.comman.customs.variables import PyObjectId
+from libs.utils.comman.customs.variables import MongoBaseModel, PyObjectId
 
 
-class GetAllDepartment(BaseModel):
-    model_config = ConfigDict(use_bson=True)
+class GetAllDepartment(MongoBaseModel):
 
-    id: PyObjectId = Field(alias="_id")
+    id: PyObjectId
     name: str

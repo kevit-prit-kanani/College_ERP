@@ -1,11 +1,13 @@
 import logging
 from datetime import UTC, datetime, timedelta
+from typing import Annotated
 
 import jwt
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from libs.utils.comman.exceptions import AuthorizationError
+from libs.utils.comman.models.Auth import find_user_in_db
 from libs.utils.config import ALGORITHM, SECRET_KEY
 
 bearer_scheme = HTTPBearer()
@@ -24,7 +26,7 @@ def create_access_token(user_id: str, role: str):
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(bearer_scheme)],
 ):
     token = credentials.credentials
 
@@ -50,7 +52,7 @@ async def get_current_user(
 def require_roles(*allowed_roles: str):
 
     async def checker(
-        current_user=Depends(get_current_user),
+        current_user: Annotated[dict, Depends(get_current_user)],
     ):
 
         if current_user["role"] not in allowed_roles:
@@ -68,6 +70,14 @@ def check_email(db, email):
     return bool(response)
 
 
-def find_user(db, email):
+def find_user(db, email) -> find_user_in_db:
     response = db.find_one({"email": email}, {"_id": 1, "role": 1})
-    return response
+    role = ""
+    if "role" not in response:
+        role = "Student"
+    else:
+        role = response["role"]
+        logger.info("role is: %s", role)
+
+    logger.info("role is: %s", role)
+    return find_user_in_db(role=role, id=response["_id"])

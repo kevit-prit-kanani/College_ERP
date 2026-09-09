@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from libs.utils.comman.customs.variables import PyObjectId
+from libs.utils.comman.customs.variables import MongoBaseModel, PyObjectId
 
 
 class CreateIntake(BaseModel):
@@ -14,8 +14,8 @@ class IntakeBranchResponse(BaseModel):
     totalStudentsIntake: int
 
 
-class GetAllIntakes(BaseModel):
-    id: PyObjectId = Field(alias="_id")
+class GetAllIntakes(MongoBaseModel):
+    id: PyObjectId
     year: int = Field(gt=1900, lt=2100)
     branches: list[IntakeBranchResponse]
 

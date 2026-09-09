@@ -1,17 +1,20 @@
 import logging
 from datetime import UTC, datetime
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from libs.utils.comman.auth.token_generation import (
     check_email,
     create_access_token,
     find_user,
+    get_current_user,
 )
 from libs.utils.comman.customs.HashPass import (
     get_hashed_password,
     verify_hashed_password,
 )
+from libs.utils.comman.customs.variables import PyObjectId
 from libs.utils.comman.exceptions import AuthenticationError, NotFoundError
 from libs.utils.comman.models.APIResponse import DBResponse, InsertEffect
 from libs.utils.comman.models.Auth import LoginRequest, StaffRegisterRequest, Token
@@ -31,7 +34,10 @@ async def login(login_request: LoginRequest) -> Token:
         login_request.role == "Student"
         and not check_email(db_Student, login_request.email)
     ):
-        raise NotFoundError(status_code=404, detail="Email Not Found")
+        raise HTTPException(
+            status_code=404,
+            detail="Email Not Found",
+        )
 
     if login_request.role == "Staff":
         db = db_Staff
@@ -48,15 +54,37 @@ async def login(login_request: LoginRequest) -> Token:
 
     user = find_user(db, login_request.email)
 
-    id = str(user["_id"])
-    if not user["role"]:
-        role = "Admin"
-    else:
-        role = str(user["role"])
-
-    token = create_access_token(user_id=id, role=role)
-    response = Token(access_token=token, token_type="JWT")
+    token = create_access_token(user_id=str(user.id), role=user.role)
+    response = Token(access_token=token, token_type="JWT", role=user.role)
     return response
+
+
+@auth.get("/decode-token")
+async def get_current_user_details(
+    current_user: Annotated[dict, Depends(get_current_user)],
+):
+    """Return the decoded token claims and the authenticated user's profile."""
+    user_id = PyObjectId(current_user["sub"])
+    role = current_user["role"]
+
+    if role == "Student":
+        user = db_Student.find_one({"_id": user_id})
+    elif role in {"Staff", "Admin"}:
+        user = db_Staff.find_one({"_id": user_id})
+    else:
+        raise AuthenticationError("Unsupported user role in token")
+
+    logger.info(
+        {
+            "token": current_user,
+            "role": role,
+            "roles": [role],
+            "user": user,
+        }
+    )
+    if user is None:
+        raise NotFoundError("User", current_user["sub"])
+    return {"token": current_user, "role": role, "roles": [role]}
 
 
 @auth.post("/register/staff")

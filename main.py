@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
@@ -6,14 +7,24 @@ from pymongo.errors import PyMongoError
 from apps.src.main import api
 from libs.utils.config import MONGODB_URL
 from libs.utils.db.mongodb.lifespan import lifespan
-from libs.utils.logging_config import setup_logging
+from logs.logging_config import setup_logging
 
 setup_logging()
 
 app = FastAPI(lifespan=lifespan)
 
-
 app.include_router(api)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")

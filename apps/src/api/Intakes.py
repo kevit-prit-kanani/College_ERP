@@ -1,19 +1,16 @@
 import logging
 from datetime import UTC, datetime
-from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import TypeAdapter
 from pymongo.errors import DuplicateKeyError
 
 from libs.utils.comman.auth.token_generation import require_roles
-from libs.utils.comman.customs.variables import PyObjectId
 from libs.utils.comman.models.APIResponse import (
     DBResponse,
-    InsertEffect,
     UpdateEffect,
 )
-from libs.utils.comman.models.Intakes import CreateIntake, GetAllIntakes, UpdateIntake
+from libs.utils.comman.models.Intakes import CreateIntake, GetAllIntakes
 from libs.utils.db.mongodb import db_Intakes
 
 looger = logging.getLogger(__name__)
@@ -59,7 +56,7 @@ def get_all_intakes():
     return response
 
 
-@intakes_admin.post("/intakes")
+@intakes_admin.post("/intake")
 def create_current_year_intakes(create_intakes: CreateIntake):
 
     current_year = datetime.now(tz=UTC).year
@@ -85,7 +82,7 @@ def create_current_year_intakes(create_intakes: CreateIntake):
     return document
 
 
-@intakes_admin.put("/intakes")
+@intakes_admin.put("/intake")
 def update_current_year_intakes(create_intakes: CreateIntake):
 
     current_year = datetime.now(tz=UTC).year
@@ -122,7 +119,7 @@ def update_current_year_intakes(create_intakes: CreateIntake):
     )
 
 
-@intakes_admin.patch("/intakes")
+@intakes_admin.patch("/intake")
 def update_department_intake(create_intakes: CreateIntake):
 
     current_year = datetime.now(tz=UTC).year
