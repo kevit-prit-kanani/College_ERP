@@ -31,14 +31,67 @@ staff_admin = APIRouter(
 def get_all_staff(
     skip: Annotated[int, Query()] = 0, limit: Annotated[int, Query()] = 10
 ):
-    staff_list = list(db_Staff.find().skip(skip).limit(limit))
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "Department",
+                "localField": "department_id",
+                "foreignField": "_id",
+                "as": "department",
+            }
+        },
+        {"$unwind": {"path": "$department", "preserveNullAndEmptyArrays": True}},
+        {
+            "$project": {
+                "_id": 1,
+                "first_name": 1,
+                "last_name": 1,
+                "email": 1,
+                "age": 1,
+                "education": 1,
+                "department_name": "$department.name",
+                "is_active": 1,
+                "is_deleted": 1,
+                "role": 1,
+            }
+        },
+        {"$skip": skip},
+        {"$limit": limit},
+    ]
+    staff_list = list(db_Staff.aggregate(pipeline))
     response = TypeAdapter(list[GetStaffResponse]).validate_python(staff_list)
     return response
 
 
 @staff.get("/staff/{staff_id}")
 def get_staff_by_id(staff_id: PyObjectId):
-    staff_by_id = db_Staff.find_one({"_id": staff_id})
+    pipeline = [
+        {"$match": {"_id": staff_id}},
+        {
+            "$lookup": {
+                "from": "Department",
+                "localField": "department_id",
+                "foreignField": "_id",
+                "as": "department",
+            }
+        },
+        {"$unwind": {"path": "$department", "preserveNullAndEmptyArrays": True}},
+        {
+            "$project": {
+                "_id": 1,
+                "first_name": 1,
+                "last_name": 1,
+                "email": 1,
+                "age": 1,
+                "education": 1,
+                "department_name": "$department.name",
+                "is_active": 1,
+                "is_deleted": 1,
+                "role": 1,
+            }
+        },
+    ]
+    staff_by_id = next(db_Staff.aggregate(pipeline), None)
     response = GetStaffResponse.model_validate(staff_by_id)
     return response.model_dump(mode="json")
 
@@ -59,7 +112,35 @@ def create_staff(staff_data: CreateStaffRequest):
 
     new_staff.pop("hash_password")
     new_staff["_id"] = result.inserted_id
-    response = GetStaffResponse(**new_staff)
+
+    pipeline = [
+        {"$match": {"_id": result.inserted_id}},
+        {
+            "$lookup": {
+                "from": "Department",
+                "localField": "department_id",
+                "foreignField": "_id",
+                "as": "department",
+            }
+        },
+        {"$unwind": {"path": "$department", "preserveNullAndEmptyArrays": True}},
+        {
+            "$project": {
+                "_id": 1,
+                "first_name": 1,
+                "last_name": 1,
+                "email": 1,
+                "age": 1,
+                "education": 1,
+                "department_name": "$department.name",
+                "is_active": 1,
+                "is_deleted": 1,
+                "role": 1,
+            }
+        },
+    ]
+    inserted_staff = next(db_Staff.aggregate(pipeline), None)
+    response = GetStaffResponse.model_validate(inserted_staff)
     return response
 
 

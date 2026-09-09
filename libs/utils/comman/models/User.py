@@ -12,7 +12,7 @@ class UserResponse(MongoBaseModel):
     email: EmailStr
     age: int | None
     education: str | None
-    department_id: PyObjectId
+    department_name: str | None = None
     is_active: bool = True
     is_deleted: bool = False
 

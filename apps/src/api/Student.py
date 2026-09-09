@@ -35,7 +35,37 @@ async def get_all_students(
     skip: Annotated[int, Query()] = 0,
     limit: Annotated[int, Query()] = 10,
 ):
-    students_list = list(db_Student.find().skip(skip).limit(limit))
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "Department",
+                "localField": "department_id",
+                "foreignField": "_id",
+                "as": "department",
+            },
+        },
+        {"$unwind": {"path": "$department", "preserveNullAndEmptyArrays": True}},
+        {
+            "$project": {
+                "_id": 1,
+                "first_name": 1,
+                "last_name": 1,
+                "email": 1,
+                "age": 1,
+                "education": 1,
+                "department_name": "$department.name",
+                "is_active": 1,
+                "is_deleted": 1,
+                "enrollment_number": 1,
+                "batch": 1,
+                "semester": 1,
+                "admission_year": 1,
+            }
+        },
+        {"$skip": skip},
+        {"$limit": limit},
+    ]
+    students_list = list(db_Student.aggregate(pipeline=pipeline))
     response = TypeAdapter(list[GetStudentResponse]).validate_python(students_list)
     return response
 
@@ -55,15 +85,72 @@ async def create_student(student_data: CreateStudentRequest):
     )
     result = db_Student.insert_one(new_student)
 
-    new_student["_id"] = result.inserted_id
-    new_student.pop("hash_password")
-    response = GetStudentResponse.model_dump(new_student, mode="ObjectId")
+    pipeline = [
+        {"$match": {"_id": result.inserted_id}},
+        {
+            "$lookup": {
+                "from": "Department",
+                "localField": "department_id",
+                "foreignField": "_id",
+                "as": "department",
+            },
+        },
+        {"$unwind": {"path": "$department", "preserveNullAndEmptyArrays": True}},
+        {
+            "$project": {
+                "_id": 1,
+                "first_name": 1,
+                "last_name": 1,
+                "email": 1,
+                "age": 1,
+                "education": 1,
+                "department_name": "$department.name",
+                "is_active": 1,
+                "is_deleted": 1,
+                "enrollment_number": 1,
+                "batch": 1,
+                "semester": 1,
+                "admission_year": 1,
+            }
+        },
+    ]
+    inserted_student = next(db_Student.aggregate(pipeline), None)
+    response = GetStudentResponse.model_validate(inserted_student)
     return response
 
 
 @student_all_roles.get("/student/{student_id}")
 async def get_student_by_id(student_id: PyObjectId):
-    student = db_Student.find_one({"_id": student_id})
+    pipeline = [
+        {"$match": {"_id": student_id}},
+        {
+            "$lookup": {
+                "from": "Department",
+                "localField": "department_id",
+                "foreignField": "_id",
+                "as": "department",
+            },
+        },
+        {"$unwind": {"path": "$department", "preserveNullAndEmptyArrays": True}},
+        {
+            "$project": {
+                "_id": 1,
+                "first_name": 1,
+                "last_name": 1,
+                "email": 1,
+                "age": 1,
+                "education": 1,
+                "department_name": "$department.name",
+                "is_active": 1,
+                "is_deleted": 1,
+                "enrollment_number": 1,
+                "batch": 1,
+                "semester": 1,
+                "admission_year": 1,
+            }
+        },
+    ]
+    student = next(db_Student.aggregate(pipeline), None)
     if student is None:
         raise NotFoundError("Student", student_id)
 
