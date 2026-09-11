@@ -25,6 +25,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     role: Literal["Staff", "Student", "Admin"]
+    user_id: PyObjectId
 
 
 class find_user_in_db(BaseModel):

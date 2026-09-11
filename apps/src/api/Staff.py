@@ -144,10 +144,9 @@ def create_staff(staff_data: CreateStaffRequest):
     return response
 
 
-@staff_admin.put("/staff")
-def update_staff(staff_data: UpdateStaffRequest):
+@staff_admin.put("/staff/{staff_id}")
+def update_staff(staff_id: PyObjectId, staff_data: UpdateStaffRequest):
     new_staff = staff_data.model_dump(by_alias=False, exclude_unset=False)
-    staff_id = new_staff.pop("id")
     new_staff.update(
         {
             "updated_at": datetime.now(UTC),

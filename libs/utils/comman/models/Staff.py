@@ -1,6 +1,5 @@
 from typing import Literal
 
-from libs.utils.comman.customs.variables import PyObjectId
 from libs.utils.comman.models.User import CreateUserRequest, UserResponse
 
 
@@ -14,6 +13,5 @@ class CreateStaffRequest(CreateUserRequest):
 
 
 class UpdateStaffRequest(CreateUserRequest):
-    id: PyObjectId
     is_active: bool
     is_deleted: bool

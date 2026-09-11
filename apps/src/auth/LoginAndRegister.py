@@ -55,7 +55,9 @@ async def login(login_request: LoginRequest) -> Token:
     user = find_user(db, login_request.email)
 
     token = create_access_token(user_id=str(user.id), role=user.role)
-    response = Token(access_token=token, token_type="JWT", role=user.role)
+    response = Token(
+        access_token=token, token_type="JWT", role=user.role, user_id=user.id
+    )
     return response
 
 
