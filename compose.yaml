@@ -8,9 +8,5 @@ services:
     environment:
       MONGODB_URL: "${MONGODB_URL}"
       FASTAPI_DATABASE_NAME: ${FASTAPI_DATABASE_NAME:-ERP}
-      FILE_PATH: /app/uploads
     ports:
       - "${FASTAPI_PORT:-8000}:8000"
-    volumes:
-      - ./uploads:/app/uploads
-    restart: unless-stopped
