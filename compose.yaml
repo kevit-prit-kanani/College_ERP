@@ -1,12 +1,10 @@
 services:
   api:
+    image: college_erp_api
     build:
       context: .
       dockerfile: Dockerfile
     env_file:
       - .env
-    environment:
-      MONGODB_URL: "${MONGODB_URL}"
-      FASTAPI_DATABASE_NAME: ${FASTAPI_DATABASE_NAME:-ERP}
     ports:
       - "${FASTAPI_PORT:-8000}:8000"
