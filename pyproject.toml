@@ -10,6 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
     "docker>=7.2.0",
     "fastapi[standard]>=0.141.1",
+    "httpx2>=2.13.0",
     "motor>=3.7.1",
     "pwdlib[argon2]>=0.3.1",
     "pydantic-settings>=2.15.0",
@@ -19,4 +20,10 @@ dependencies = [
     "uvicorn>=0.52.4",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]

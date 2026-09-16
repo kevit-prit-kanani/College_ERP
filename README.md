@@ -227,8 +227,34 @@ Uploaded files are stored in the `uploads/` directory. Ensure this directory has
 
 ### Running Tests
 ```bash
-pytest
+TEST_STAFF_EMAIL=admin@gmail.com TEST_STAFF_PASSWORD='your-password' uv run pytest
 ```
+
+The test suite calls `POST /auth/login` using the configured Staff account,
+checks that the returned response contains a valid JWT, and uses that JWT to
+call `GET /students`. It also confirms that the student list rejects requests
+without a token. The test data is in-memory, so running the suite does not
+alter MongoDB.
+
+### GitHub checks and push protection
+
+GitHub Actions runs the complete pytest suite for every push and pull request.
+Add these repository secrets before the first push:
+
+- `TEST_STAFF_EMAIL` (`admin@gmail.com`)
+- `TEST_STAFF_PASSWORD` (the supplied Staff password)
+
+To run the same gate locally before Git sends a push, enable the tracked hook
+once in each clone:
+
+```bash
+./scripts/install-git-hooks.sh
+```
+
+GitHub receives a push before Actions can run, so a local pre-push hook is the
+mechanism that prevents an untested push. To prevent failed builds from being
+merged, make the `pytest` status check required in the repository branch
+protection rules for each protected branch.
 
 ### Code Style
 The project follows PEP 8 standards. Use the following for linting:

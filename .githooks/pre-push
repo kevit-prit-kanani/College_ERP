@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# Runs before Git sends any refs to a remote. Install once with
+# `git config core.hooksPath .githooks` (or `./scripts/install-git-hooks.sh`).
+set -eu
+
+uv run pytest
