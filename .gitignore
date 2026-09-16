@@ -26,8 +26,10 @@ htmlcov/
 .vscode/
 .idea/
 .DS_Store
+
 logs/*
 !logs/logging_config.py
 !logs/__init__.py
+
 testing.txt
 test.txt
