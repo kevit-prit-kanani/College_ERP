@@ -1,0 +1,46 @@
+name: Test and build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ci-only-secret-key-at-least-32
+      MONGODB_URL: ${{ secrets.MONGODB_URL }}
+      TEST_STAFF_EMAIL: ${{ secrets.TEST_STAFF_EMAIL }}
+      TEST_STAFF_PASSWORD: ${{ secrets.TEST_STAFF_PASSWORD }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install locked dependencies
+        run: uv sync --frozen
+
+      - name: Run authentication and student endpoint tests
+        run: uv run pytest
+
+  build:
+    name: Build application
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build --tag college-erp-ci .
